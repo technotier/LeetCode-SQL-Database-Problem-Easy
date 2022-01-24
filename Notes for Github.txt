@@ -1,0 +1,195 @@
+/* write as SQL query from combining two tables to report that the information with First Name, Last Name City, State */
+select * from Person;
+select * from Address;
+SELECT 
+    p.FirstName, p.LastName, a.City, a.State
+FROM
+    Person p
+        LEFT JOIN
+    Address a ON p.PersonID = a.PersonId
+ORDER BY FirstName;
+
+
+/* Retrieve Second Highest Salary from Salary Table */
+select * from Salaries;
+/*Exm 01: */
+SELECT 
+    MAX(salary)
+FROM
+    salaries
+WHERE
+    salary <> (SELECT 
+            MAX(salary)
+        FROM
+            salaries);
+
+/* Exm 02: */
+SELECT 
+    salary
+FROM
+    salaries
+ORDER BY salary DESC
+LIMIT 1 , 1;
+
+
+/* Employee earning more than their Manager */
+select * from emp;
+SELECT 
+    e1.ID, e1.name, e1.salary
+FROM
+    emp e1
+        JOIN
+    emp e2 ON e1.ManagerID = e2.ID
+WHERE
+    e1.salary > e2.salary;
+
+
+/* Check Duplicate Emails */
+select * from email;
+SELECT 
+    email, COUNT(email)
+FROM
+    email
+GROUP BY email
+HAVING COUNT(email) > 1;
+
+
+/* Customer who never Orders */
+select * from Customer;
+select * from Orders;
+SELECT 
+    c.Name, c.ID, o.CustomerID
+FROM
+    Customer c
+        LEFT JOIN
+    Orders o ON c.ID = o.CustomerID
+WHERE
+    o.CustomerID IS NULL;
+
+
+/* First Login Date for each Player*/
+select * from Activity;
+SELECT 
+    player_id, MIN(event_date) AS First_LoggedIn
+FROM
+    Activity
+GROUP BY player_id;
+
+
+/* First Log in with First Device ID */
+select * from Activity;
+SELECT 
+    player_id, device_id, MIN(event_date)
+FROM
+    Activity
+GROUP BY player_id;
+
+
+/* Employee Bonus */
+select * from employee;
+select * from Bonus;
+SELECT 
+    e.empId, e.name, b.bonus
+FROM
+    employee e
+        LEFT JOIN
+    Bonus b ON e.empId = b.empId
+WHERE
+    b.bonus < 1000 OR b.bonus IS NULL;
+
+
+/* Customer who orders most */
+select * from Orders;
+SELECT 
+    CustomerID, COUNT(DISTINCT ID) AS Order_Qty
+FROM
+    Orders
+GROUP BY CustomerID
+ORDER BY COUNT(DISTINCT ID) DESC
+LIMIT 1;
+
+
+/* Big Countries (Exm: area bigger than 3 million or population more than 25 million) */
+select * from World;
+SELECT 
+    name, population, area
+FROM
+    World
+WHERE
+    area > 3000000 OR population > 25000000;
+
+
+/* Classes with more than 5 Students */
+select * from Courses;
+SELECT 
+    class, COUNT(student) AS Student
+FROM
+    courses
+GROUP BY class
+HAVING COUNT(student) >= 5;
+
+
+/* Cinema with ODD ID and Description is not 'Boring' */
+select * from Cinema;
+SELECT 
+    *
+FROM
+    Cinema
+WHERE
+    id % 2 <> 0 AND description <> 'Boring'
+ORDER BY rating DESC;
+
+
+/* Buyer ID who bought S8 but not iPhone */
+select * from s_sales;
+select * from p_product;
+
+SELECT 
+    p.product_id, p.product_name, s.buyer_id
+FROM
+    p_product p
+        JOIN
+    s_sales s ON p.product_id = s.product_id
+WHERE
+    p.product_name = 'S8'
+        AND p.product_name <> 'iphone';
+
+
+/* Product sold only in Spring OR Date Between */
+select * from s_sales;
+select * from p_product;
+
+SELECT 
+    p.product_id, p.product_name, s.sale_date
+FROM
+    p_product p
+        JOIN
+    s_sales s ON p.product_id = s.product_id
+GROUP BY p.product_id
+HAVING MIN(s.sale_date) >= '2019-01-01'
+    AND MAX(s.sale_date) <= '2019-03-31';
+
+
+/* Percentage of Immediate Food Delivery */
+select * from Delivery;
+
+SELECT 
+    ROUND(SUM(order_date = customer_pref_delivery_date) * 100 / COUNT(*),
+            2) AS Percentage
+FROM
+    Delivery;
+
+
+/* Reformat Table */
+select * from departments;
+
+SELECT 
+    id,
+    SUM(IF(month = 'Jan', revenue, 0)) AS 'Jan_Rev',
+    SUM(IF(month = 'Feb', revenue, 0)) AS 'Feb_Rev',
+    SUM(IF(month = 'Mar', revenue, 0)) AS 'Mar_Rev'
+FROM
+    departments
+GROUP BY id;
+
+
